@@ -1,5 +1,5 @@
 *{
-    margin: 0% auto;
+    margin: 0%;
     padding: 0%;
     border: none;
 }
@@ -7,6 +7,9 @@
 img{
     top: 50%;
     position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
 
 #Superior{

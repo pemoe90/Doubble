@@ -12,11 +12,13 @@ var controlador = {
 window.onload = function (){
 	buscarElementosImg();
 	colocarImagenesSuperiores();
+	estiloImagenes();
 }
 
 function empezar(){
 	buscarElementosImg();
 	colocarImagenes();
+	estiloImagenes();
 }
 
 function buscarElementosImg(){
@@ -92,4 +94,25 @@ function comprobarRepetido(imagen){
 		controlador.puntos --;
 	}
 	empezar();
+}
+
+function estiloImagenes(){
+	for(i = 0; i < controlador.imgSup.length; i++){
+		//imagenes superiores
+		var aux = Math.floor((Math.random() * 5) + 5);
+		controlador.imgSup[i].style.width = aux + "%";
+
+		aux = Math.floor((Math.random() * 360) + 0);
+		var rotar = "rotate(" + aux + "deg)";
+		controlador.imgSup[i].style.transform = rotar;
+
+		//imagenes inferiores
+		aux = Math.floor((Math.random() * 5) + 5);
+		controlador.imgInf[i].style.width = aux + "%";
+
+		aux = Math.floor((Math.random() * 360) + 0);
+		rotar = "rotate(" + aux + "deg)";
+		controlador.imgInf[i].style.transform = rotar;
+		
+	}
 }
