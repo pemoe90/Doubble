@@ -15,7 +15,7 @@
 var controlador = {
 	imgSup: [],
 	imgInf: [],
-	imagenes: ["img/1.png", "img/2.png", "img/3.png" ,"img/4.png", "img/5.png", "img/6.png", "img/7.png", "img/8.png", "img/9.png"],
+	imagenes: ["img/hidden1.png","img/hidden6.png","img/hidden11.png", "img/hidden16.png", "img/hidden41.png", "img/hidden43.png", "img/hidden45.png", "img/hidden46.png", "img/hidden47.png", "img/hidden48.png", "img/hidden64.png", "img/hidden69.png", "img/hidden71.png", "img/hidden76.png"],
 	copiaImagenes: [],
 	imagenRepetida: "",
 	puntos: 0,
@@ -68,7 +68,7 @@ function buscarElementosImg(){
  * @description Función que llama a los funciones que tratan las imagenes 
  */
 function colocarImagenes(){
-	copiarArraysImagenes();
+	copiarArray(controlador.imagenes, controlador.copiaImagenes);
 	colocarImagenesSuperiores();
 	colocarImagenesInferiores();
 }
@@ -77,13 +77,15 @@ function colocarImagenes(){
 /** 
  * @function copiarArraysImagenes 
  * @description Función que copia el array que contiene las imagenes en otro array
+ * @param {Array} arrayOrigen Array que se quiere copiar
+ * @param {Array} arrayDestino Array donde se va a copiar
  */
-function copiarArraysImagenes(){
-	controlador.copiaImagenes.splice(0, controlador.copiaImagenes.length);
+function copiarArray(arrayOrigen, arrayDestino){
+	arrayDestino.splice(0, arrayDestino.length);
 	
-	for(i = 0; i < controlador.imagenes.length; i++){
-		var aux = controlador.imagenes[i];
-		controlador.copiaImagenes.push(aux);
+	for(i = 0; i < arrayOrigen.length; i++){
+		var aux = arrayOrigen[i];
+		arrayDestino.push(aux);
 	}
 	
 }
