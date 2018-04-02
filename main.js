@@ -11,6 +11,7 @@
   * @prop {Array} copiaImagenes Array para controlar las imagenes que no se han colocado
   * @prop {String} imagenRepetida Nombre de la imagen que se repetirá
   * @prop {Integer} puntos Puntos acumulados
+  * @prop {Integer} tiempo Tiempo del cronometro
   */
 var controlador = {
 	imgSup: [],
@@ -19,6 +20,7 @@ var controlador = {
 	copiaImagenes: [],
 	imagenRepetida: "",
 	puntos: 0,
+	tiempo : 5,
 };
 
 
@@ -27,6 +29,7 @@ window.onload = function (){
 	buscarElementosImg();
 	colocarImagenes();
 	estiloImagenes();
+	cronometro();
 }
 
 /**
@@ -132,13 +135,20 @@ function colocarImagenesInferiores(){
  * @param {Img} imagen Elemento imagen del html
  */
 function comprobarImagenRepetida(imagen){
-	if(imagen.src == controlador.imagenRepetida){
-		controlador.puntos ++;
+	if(controlador.tiempo > 0){
+		if(imagen.src == controlador.imagenRepetida){
+			controlador.puntos ++;
+			controlador.tiempo ++;
+		}
+		else{
+			controlador.puntos --;
+			controlador.tiempo --;
+		}
+		document.getElementById("Puntos").innerHTML = "Puntos: " + controlador.puntos;
+		document.getElementById("Cronometro").innerHTML = controlador.tiempo;
+		crearTablero();
 	}
-	else{
-		controlador.puntos --;
-	}
-	crearTablero();
+	
 }
 
 /**
@@ -150,6 +160,7 @@ function estiloImagenes(){
 		//imagenes superiores
 		var aux = Math.floor((Math.random() * 5) + 5);
 		controlador.imgSup[i].style.width = aux + "%";
+		
 
 		aux = Math.floor((Math.random() * 360) + 0);
 		var rotar = "rotate(" + aux + "deg)";
@@ -163,5 +174,13 @@ function estiloImagenes(){
 		rotar = "rotate(" + aux + "deg)";
 		controlador.imgInf[i].style.transform = rotar;
 		
+	}
+}
+
+function cronometro(){
+	controlador.tiempo --;
+	document.getElementById("Cronometro").innerHTML = controlador.tiempo;
+	if(controlador.tiempo > 0){
+		setTimeout(cronometro, 1000);
 	}
 }
