@@ -12,6 +12,7 @@
   * @prop {String} imagenRepetida Nombre de la imagen que se repetirá
   * @prop {Integer} puntos Puntos acumulados
   * @prop {Integer} tiempo Tiempo del cronometro
+  * @prop {Integer} nImagenes Numero de imagenes que tiene el nivel
   */
 var controlador = {
 	imgSup: [],
@@ -20,12 +21,14 @@ var controlador = {
 	copiaImagenes: [],
 	imagenRepetida: "",
 	puntos: 0,
-	tiempo : 5,
+	tiempo : 60,
+	nImagenes: 0,
 };
 
 
 
 window.onload = function (){
+	crearElementoImagen(6);
 	buscarElementosImg();
 	colocarImagenes();
 	estiloImagenes();
@@ -42,6 +45,30 @@ function crearTablero(){
 	estiloImagenes();
 }
 
+function crearElementoImagen(nImagenes){
+	controlador.nImagenes = nImagenes;
+	var sup = document.getElementById("Superior");
+	var inf = document.getElementById("Inferior");
+	for(i = 1; i<= nImagenes; i++){
+		var imagenSup = document.createElement("img");
+		imagenSup.id = "Sup" + i;
+		var id = imagenSup.id
+		imagenSup.addEventListener("click", function(){
+			comprobarImagenRepetida(this);
+		})
+		sup.appendChild(imagenSup);
+		
+
+		//Imagenes inferiores
+		var imagenInf = document.createElement("img");
+		imagenInf.id = "Inf" + i;
+		imagenInf.addEventListener("click", function(){
+			comprobarImagenRepetida(this);
+		})
+		inf.appendChild(imagenInf);
+	}
+}
+
 /** 
  * @function buscarElementosImg 
  * @description Función para almacenar los elementos imagen del html para poder trabajar con ellos
@@ -51,12 +78,11 @@ function buscarElementosImg(){
 	var idInf = "Inf";
 	var id = "";
 	if(controlador.imgSup.length == 0){
-		for(var i = 1; i<=5; i++){
+		for(var i = 1; i<=controlador.nImagenes; i++){
 			//busco y guardo las imagenes superiores
 			id = idSup + i;
 			var elemento = document.getElementById(id);
 			controlador.imgSup.push(elemento);
-			
 			//busco y guardo las imagenes inferiores
 			id = idInf + i;
 			elemento = document.getElementById(id);
@@ -158,9 +184,8 @@ function comprobarImagenRepetida(imagen){
 function estiloImagenes(){
 	for(i = 0; i < controlador.imgSup.length; i++){
 		//imagenes superiores
-		var aux = Math.floor((Math.random() * 5) + 5);
+		var aux = Math.floor((Math.random() * 	5) + 5);
 		controlador.imgSup[i].style.width = aux + "%";
-		
 
 		aux = Math.floor((Math.random() * 360) + 0);
 		var rotar = "rotate(" + aux + "deg)";

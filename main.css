@@ -5,17 +5,27 @@
 }
 
 img{
-    top: 50%;
-    width: 10%;
-    position: absolute;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
+    align-self: auto;
+}
+
+.Puntuacion{
+    display: inherit;
+    z-index: 0;
+}
+.Contenedor{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    align-content: center;
+    flex-wrap: nowrap;
 }
 
 #Superior{
+    z-index: -1;
     width: 100%;
     height: 50%;
+    top: 0%;
     background-color: blue;
     position: absolute;
 }
@@ -27,7 +37,7 @@ img{
     background-color: black;
     position: absolute;
 }
-
+/*
 #Sup1{
     left: 15%;
 }
@@ -67,3 +77,4 @@ img{
 #Inf5{
     left: 75%;
 }
+*/
