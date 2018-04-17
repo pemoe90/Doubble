@@ -182,9 +182,10 @@ function comprobarImagenRepetida(imagen){
  * @description Cambia aleatoriamente el tamaño y la rotacion de las imagenes
  */
 function estiloImagenes(){
+	//Math.floor(Math.random() * (max - min)) + min;
 	for(i = 0; i < controlador.imgSup.length; i++){
 		//imagenes superiores
-		var aux = Math.floor((Math.random() * 	5) + 5);
+		var aux = Math.floor((Math.random() * 	7) + 3);
 		controlador.imgSup[i].style.width = aux + "%";
 
 		aux = Math.floor((Math.random() * 360) + 0);
@@ -192,7 +193,7 @@ function estiloImagenes(){
 		controlador.imgSup[i].style.transform = rotar;
 
 		//imagenes inferiores
-		aux = Math.floor((Math.random() * 5) + 5);
+		aux = Math.floor((Math.random() * 7) + 3);
 		controlador.imgInf[i].style.width = aux + "%";
 
 		aux = Math.floor((Math.random() * 360) + 0);
