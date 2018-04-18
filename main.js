@@ -31,20 +31,14 @@ window.onload = function (){
 	crearElementoImagen(6);
 	buscarElementosImg();
 	colocarImagenes();
-	estiloImagenes();
 	cronometro();
 }
 
 /**
- * @function crearTablero 
- * @description Función para crear un nuevo tablero
+ * @function crearElementoImagen
+ * @description Crea el numero de elementos imagen indicado por el parametro
+ * @param {Integer} nImagenes Numero de imagenes a crear 
  */
-function crearTablero(){
-	buscarElementosImg();
-	colocarImagenes();
-	estiloImagenes();
-}
-
 function crearElementoImagen(nImagenes){
 	controlador.nImagenes = nImagenes;
 	var sup = document.getElementById("Superior");
@@ -52,7 +46,6 @@ function crearElementoImagen(nImagenes){
 	for(i = 1; i<= nImagenes; i++){
 		var imagenSup = document.createElement("img");
 		imagenSup.id = "Sup" + i;
-		var id = imagenSup.id
 		imagenSup.addEventListener("click", function(){
 			comprobarImagenRepetida(this);
 		})
@@ -124,11 +117,14 @@ function copiarArray(arrayOrigen, arrayDestino){
  * @description  Función que añade las imagenes superiores y escoge la imagen a repetir
  */
 function colocarImagenesSuperiores(){
-	var elementoARepetir = Math.floor(Math.random() * 4);
+	var elementoARepetir = Math.floor(Math.random() * controlador.nImagenes - 1);
 	for(i = 0; i < controlador.imgSup.length; i++){
 		var longitudCopiaImagenes = controlador.copiaImagenes.length - 1;
 		var aux = Math.floor(Math.random() * longitudCopiaImagenes);
 		controlador.imgSup[i].src = controlador.copiaImagenes[aux];
+		controlador.imgSup[i].onload = function(){
+			estiloImagenes(this);
+		}
 		controlador.copiaImagenes.splice(aux, 1);
 		if(i == elementoARepetir){
 			controlador.imagenRepetida = controlador.imgSup[i].src;
@@ -145,11 +141,17 @@ function colocarImagenesInferiores(){
 	for(var i = 0; i < controlador.imgInf.length; i++){
 		if(i == elementoARepetir){
 			controlador.imgInf[i].src = controlador.imagenRepetida;
+			controlador.imgInf[i].onload = function(){
+				estiloImagenes(this);
+			}
 		}
 		else{
 			var longitudCopiaImagenes = controlador.copiaImagenes.length - 1;
 			var aux = Math.floor(Math.random() * longitudCopiaImagenes);
 			controlador.imgInf[i].src = controlador.copiaImagenes[aux];
+			controlador.imgInf[i].onload = function(){
+				estiloImagenes(this);
+			}
 			controlador.copiaImagenes.splice(aux, 1);
 		}
 	}
@@ -172,7 +174,7 @@ function comprobarImagenRepetida(imagen){
 		}
 		document.getElementById("Puntos").innerHTML = "Puntos: " + controlador.puntos;
 		document.getElementById("Cronometro").innerHTML = controlador.tiempo;
-		crearTablero();
+		colocarImagenes();
 	}
 	
 }
@@ -180,29 +182,43 @@ function comprobarImagenRepetida(imagen){
 /**
  * @function estiloImagenes 
  * @description Cambia aleatoriamente el tamaño y la rotacion de las imagenes
+ * @param imagen Imagen a la que hay que cambiarle el estilo
  */
-function estiloImagenes(){
-	//Math.floor(Math.random() * (max - min)) + min;
-	for(i = 0; i < controlador.imgSup.length; i++){
-		//imagenes superiores
-		var aux = Math.floor((Math.random() * 	7) + 3);
-		controlador.imgSup[i].style.width = aux + "%";
+
+
+function estiloImagenes(imagen){
+	console.log(imagen.src, imagen.naturalWidth, imagen.naturalHeight, imagen.style.width);
+
+	if(imagen.naturalWidth >= imagen.naturalHeight){
+		
+		var aux = Math.floor((Math.random() * (100/controlador.nImagenes))+5);
+		imagen.style.width =  aux + "%";
+		imagen.style.height = "auto";
+
 
 		aux = Math.floor((Math.random() * 360) + 0);
 		var rotar = "rotate(" + aux + "deg)";
-		controlador.imgSup[i].style.transform = rotar;
+		imagen.style.transform = rotar;
+	}
 
-		//imagenes inferiores
-		aux = Math.floor((Math.random() * 7) + 3);
-		controlador.imgInf[i].style.width = aux + "%";
+	else{
+		
+		var aux = Math.floor((Math.random() * (100/controlador.nImagenes))+5);
+		imagen.style.height = aux + "%";
+		imagen.style.width = "auto";
 
 		aux = Math.floor((Math.random() * 360) + 0);
-		rotar = "rotate(" + aux + "deg)";
-		controlador.imgInf[i].style.transform = rotar;
-		
+		var rotar = "rotate(" + aux + "deg)";
+		imagen.style.transform = rotar;
 	}
+
+	
 }
 
+/**
+ * @function cronometro 
+ * @description Crea un cronometro en la pantalla 
+ */
 function cronometro(){
 	controlador.tiempo --;
 	document.getElementById("Cronometro").innerHTML = controlador.tiempo;

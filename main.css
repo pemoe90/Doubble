@@ -13,6 +13,7 @@ img{
     z-index: 0;
 }
 .Contenedor{
+    z-index: 0;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -37,44 +38,3 @@ img{
     background-color: black;
     position: absolute;
 }
-/*
-#Sup1{
-    left: 15%;
-}
-
-#Sup2{
-    left: 30%;
-}
-
-#Sup3{
-    left: 45%;
-}
-
-#Sup4{
-    left: 60%;
-}
-
-#Sup5{
-    left: 75%;
-}
-
-#Inf1{
-    left: 15%;
-}
-
-#Inf2{
-    left: 30%;
-}
-
-#Inf3{
-    left: 45%;
-}
-
-#Inf4{
-    left: 60%;
-}
-
-#Inf5{
-    left: 75%;
-}
-*/
