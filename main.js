@@ -163,12 +163,16 @@ function colocarImagenesInferiores(){
  * @param {Img} imagen Elemento imagen del html
  */
 function comprobarImagenRepetida(imagen){
+	var sonidoError = new Audio("sound/fallo.wav");
+	var sonidoAcierto = new Audio("sound/acierto.wav");
 	if(controlador.tiempo > 0){
 		if(imagen.src == controlador.imagenRepetida){
+			sonidoAcierto.play();
 			controlador.puntos ++;
 			controlador.tiempo ++;
 		}
 		else{
+			sonidoError.play();
 			controlador.puntos --;
 			controlador.tiempo --;
 		}

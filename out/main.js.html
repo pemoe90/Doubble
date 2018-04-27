@@ -39,32 +39,55 @@
   * @prop {Array} copiaImagenes Array para controlar las imagenes que no se han colocado
   * @prop {String} imagenRepetida Nombre de la imagen que se repetirá
   * @prop {Integer} puntos Puntos acumulados
+  * @prop {Integer} tiempo Tiempo del cronometro
+  * @prop {Integer} nImagenes Numero de imagenes que tiene el nivel
   */
 var controlador = {
 	imgSup: [],
 	imgInf: [],
-	imagenes: ["img/1.png", "img/2.png", "img/3.png" ,"img/4.png", "img/5.png", "img/6.png", "img/7.png", "img/8.png", "img/9.png"],
+	imagenes: ["img/hidden1.png","img/hidden6.png","img/hidden11.png", "img/hidden16.png", "img/hidden41.png", "img/hidden43.png", "img/hidden45.png", "img/hidden46.png", "img/hidden47.png", "img/hidden48.png", "img/hidden64.png", "img/hidden69.png", "img/hidden71.png", "img/hidden76.png"],
 	copiaImagenes: [],
 	imagenRepetida: "",
 	puntos: 0,
+	tiempo : 60,
+	nImagenes: 0,
 };
 
 
 
 window.onload = function (){
+	crearElementoImagen(6);
 	buscarElementosImg();
 	colocarImagenes();
-	estiloImagenes();
+	cronometro();
 }
 
 /**
- * @function crearTablero 
- * @description Función para crear un nuevo tablero
+ * @function crearElementoImagen
+ * @description Crea el numero de elementos imagen indicado por el parametro
+ * @param {Integer} nImagenes Numero de imagenes a crear 
  */
-function crearTablero(){
-	buscarElementosImg();
-	colocarImagenes();
-	estiloImagenes();
+function crearElementoImagen(nImagenes){
+	controlador.nImagenes = nImagenes;
+	var sup = document.getElementById("Superior");
+	var inf = document.getElementById("Inferior");
+	for(i = 1; i&lt;= nImagenes; i++){
+		var imagenSup = document.createElement("img");
+		imagenSup.id = "Sup" + i;
+		imagenSup.addEventListener("click", function(){
+			comprobarImagenRepetida(this);
+		})
+		sup.appendChild(imagenSup);
+		
+
+		//Imagenes inferiores
+		var imagenInf = document.createElement("img");
+		imagenInf.id = "Inf" + i;
+		imagenInf.addEventListener("click", function(){
+			comprobarImagenRepetida(this);
+		})
+		inf.appendChild(imagenInf);
+	}
 }
 
 /** 
@@ -76,12 +99,11 @@ function buscarElementosImg(){
 	var idInf = "Inf";
 	var id = "";
 	if(controlador.imgSup.length == 0){
-		for(var i = 1; i&lt;=5; i++){
+		for(var i = 1; i&lt;=controlador.nImagenes; i++){
 			//busco y guardo las imagenes superiores
 			id = idSup + i;
 			var elemento = document.getElementById(id);
 			controlador.imgSup.push(elemento);
-			
 			//busco y guardo las imagenes inferiores
 			id = idInf + i;
 			elemento = document.getElementById(id);
@@ -96,7 +118,7 @@ function buscarElementosImg(){
  * @description Función que llama a los funciones que tratan las imagenes 
  */
 function colocarImagenes(){
-	copiarArraysImagenes();
+	copiarArray(controlador.imagenes, controlador.copiaImagenes);
 	colocarImagenesSuperiores();
 	colocarImagenesInferiores();
 }
@@ -105,13 +127,15 @@ function colocarImagenes(){
 /** 
  * @function copiarArraysImagenes 
  * @description Función que copia el array que contiene las imagenes en otro array
+ * @param {Array} arrayOrigen Array que se quiere copiar
+ * @param {Array} arrayDestino Array donde se va a copiar
  */
-function copiarArraysImagenes(){
-	controlador.copiaImagenes.splice(0, controlador.copiaImagenes.length);
+function copiarArray(arrayOrigen, arrayDestino){
+	arrayDestino.splice(0, arrayDestino.length);
 	
-	for(i = 0; i &lt; controlador.imagenes.length; i++){
-		var aux = controlador.imagenes[i];
-		controlador.copiaImagenes.push(aux);
+	for(i = 0; i &lt; arrayOrigen.length; i++){
+		var aux = arrayOrigen[i];
+		arrayDestino.push(aux);
 	}
 	
 }
@@ -121,11 +145,14 @@ function copiarArraysImagenes(){
  * @description  Función que añade las imagenes superiores y escoge la imagen a repetir
  */
 function colocarImagenesSuperiores(){
-	var elementoARepetir = Math.floor(Math.random() * 4);
+	var elementoARepetir = Math.floor(Math.random() * controlador.nImagenes - 1);
 	for(i = 0; i &lt; controlador.imgSup.length; i++){
 		var longitudCopiaImagenes = controlador.copiaImagenes.length - 1;
 		var aux = Math.floor(Math.random() * longitudCopiaImagenes);
 		controlador.imgSup[i].src = controlador.copiaImagenes[aux];
+		controlador.imgSup[i].onload = function(){
+			estiloImagenes(this);
+		}
 		controlador.copiaImagenes.splice(aux, 1);
 		if(i == elementoARepetir){
 			controlador.imagenRepetida = controlador.imgSup[i].src;
@@ -142,11 +169,17 @@ function colocarImagenesInferiores(){
 	for(var i = 0; i &lt; controlador.imgInf.length; i++){
 		if(i == elementoARepetir){
 			controlador.imgInf[i].src = controlador.imagenRepetida;
+			controlador.imgInf[i].onload = function(){
+				estiloImagenes(this);
+			}
 		}
 		else{
 			var longitudCopiaImagenes = controlador.copiaImagenes.length - 1;
 			var aux = Math.floor(Math.random() * longitudCopiaImagenes);
 			controlador.imgInf[i].src = controlador.copiaImagenes[aux];
+			controlador.imgInf[i].onload = function(){
+				estiloImagenes(this);
+			}
 			controlador.copiaImagenes.splice(aux, 1);
 		}
 	}
@@ -158,39 +191,74 @@ function colocarImagenesInferiores(){
  * @param {Img} imagen Elemento imagen del html
  */
 function comprobarImagenRepetida(imagen){
-	if(imagen.src == controlador.imagenRepetida){
-		controlador.puntos ++;
+	var sonidoError = new Audio("sound/fallo.wav");
+	var sonidoAcierto = new Audio("sound/acierto.wav");
+	if(controlador.tiempo > 0){
+		if(imagen.src == controlador.imagenRepetida){
+			sonidoAcierto.play();
+			controlador.puntos ++;
+			controlador.tiempo ++;
+		}
+		else{
+			sonidoError.play();
+			controlador.puntos --;
+			controlador.tiempo --;
+		}
+		document.getElementById("Puntos").innerHTML = "Puntos: " + controlador.puntos;
+		document.getElementById("Cronometro").innerHTML = controlador.tiempo;
+		colocarImagenes();
 	}
-	else{
-		controlador.puntos --;
-	}
-	crearTablero();
+	
 }
 
 /**
  * @function estiloImagenes 
  * @description Cambia aleatoriamente el tamaño y la rotacion de las imagenes
+ * @param imagen Imagen a la que hay que cambiarle el estilo
  */
-function estiloImagenes(){
-	for(i = 0; i &lt; controlador.imgSup.length; i++){
-		//imagenes superiores
-		var aux = Math.floor((Math.random() * 5) + 5);
-		controlador.imgSup[i].style.width = aux + "%";
+
+
+function estiloImagenes(imagen){
+	console.log(imagen.src, imagen.naturalWidth, imagen.naturalHeight, imagen.style.width);
+
+	if(imagen.naturalWidth >= imagen.naturalHeight){
+		
+		var aux = Math.floor((Math.random() * (100/controlador.nImagenes))+5);
+		imagen.style.width =  aux + "%";
+		imagen.style.height = "auto";
+
 
 		aux = Math.floor((Math.random() * 360) + 0);
 		var rotar = "rotate(" + aux + "deg)";
-		controlador.imgSup[i].style.transform = rotar;
+		imagen.style.transform = rotar;
+	}
 
-		//imagenes inferiores
-		aux = Math.floor((Math.random() * 5) + 5);
-		controlador.imgInf[i].style.width = aux + "%";
+	else{
+		
+		var aux = Math.floor((Math.random() * (100/controlador.nImagenes))+5);
+		imagen.style.height = aux + "%";
+		imagen.style.width = "auto";
 
 		aux = Math.floor((Math.random() * 360) + 0);
-		rotar = "rotate(" + aux + "deg)";
-		controlador.imgInf[i].style.transform = rotar;
-		
+		var rotar = "rotate(" + aux + "deg)";
+		imagen.style.transform = rotar;
 	}
-}</code></pre>
+
+	
+}
+
+/**
+ * @function cronometro 
+ * @description Crea un cronometro en la pantalla 
+ */
+function cronometro(){
+	controlador.tiempo --;
+	document.getElementById("Cronometro").innerHTML = controlador.tiempo;
+	if(controlador.tiempo > 0){
+		setTimeout(cronometro, 1000);
+	}
+}
+</code></pre>
         </article>
     </section>
 
@@ -200,13 +268,13 @@ function estiloImagenes(){
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="controlador.html">controlador</a></li></ul><h3>Global</h3><ul><li><a href="global.html#buscarElementosImg">buscarElementosImg</a></li><li><a href="global.html#colocarImagenes">colocarImagenes</a></li><li><a href="global.html#colocarImagenesInferiores">colocarImagenesInferiores</a></li><li><a href="global.html#colocarImagenesSuperiores">colocarImagenesSuperiores</a></li><li><a href="global.html#comprobarImagenRepetida">comprobarImagenRepetida</a></li><li><a href="global.html#copiarArraysImagenes">copiarArraysImagenes</a></li><li><a href="global.html#crearTablero">crearTablero</a></li><li><a href="global.html#estiloImagenes">estiloImagenes</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="controlador.html">controlador</a></li></ul><h3>Global</h3><ul><li><a href="global.html#buscarElementosImg">buscarElementosImg</a></li><li><a href="global.html#colocarImagenes">colocarImagenes</a></li><li><a href="global.html#colocarImagenesInferiores">colocarImagenesInferiores</a></li><li><a href="global.html#colocarImagenesSuperiores">colocarImagenesSuperiores</a></li><li><a href="global.html#comprobarImagenRepetida">comprobarImagenRepetida</a></li><li><a href="global.html#copiarArraysImagenes">copiarArraysImagenes</a></li><li><a href="global.html#crearElementoImagen">crearElementoImagen</a></li><li><a href="global.html#cronometro">cronometro</a></li><li><a href="global.html#estiloImagenes">estiloImagenes</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Mar 06 2018 10:54:15 GMT+0100 (STD)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Apr 27 2018 21:21:27 GMT+0200 (DST)
 </footer>
 
 <script> prettyPrint(); </script>
